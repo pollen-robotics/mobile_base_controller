@@ -15,7 +15,10 @@ setup(
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name), glob('launch/*.py')),
     ],
-    install_requires=['setuptools'],
+    install_requires=[
+        'setuptools',
+        'odrive',
+    ],
     zip_safe=True,
     maintainer='Pollen-Robotics',
     maintainer_email='contact@pollen-robotics.com',
