@@ -72,7 +72,6 @@ class MobileBaseController(Node):
     def on_direction_goals(self, msg: MobileBaseDirection) -> None:
         if self.current_mode == 'close_loop':
             l, r = self.speeds_from_direction(msg.x, msg.y)
-            print(msg.x, msg.y, l, r)
 
             if (l, r) == self.current_speed == (0, 0):
                 # Do not resend 0 speed to keep static position control
