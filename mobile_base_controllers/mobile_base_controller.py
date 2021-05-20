@@ -3,6 +3,7 @@ from typing import Tuple
 import rclpy
 from rclpy.node import Node
 
+from numpy import sqrt
 
 from reachy_msgs.msg import MobileBaseDirection
 from reachy_msgs.srv import SetMobileBaseMode
@@ -86,29 +87,13 @@ class MobileBaseController(Node):
         vmax = 1
         dead_zone = 0.1
 
-        if abs(x) <= dead_zone and abs(y) <= dead_zone:
+        if sqrt(x ** 2 + y ** 2) <= dead_zone:
             return 0, 0
 
-        if abs(y) <= dead_zone and abs(x) > dead_zone:
-            return x * vmax, x * vmax
-
-        if abs(y) > dead_zone and abs(x) <= dead_zone:
-            return y * vmax, -y * vmax
-
-        speed = y * vmax
-        angle = x * vmax
-
-        if angle > dead_zone and speed > dead_zone:
-            return speed, -(speed - angle)
-
-        elif angle > dead_zone and speed < -dead_zone:
-            return speed - angle, -speed
-
-        elif angle < -dead_zone and speed > dead_zone:
-            return speed, -(speed - angle)
-
-        elif angle < -dead_zone and speed < -dead_zone:
-            return speed - angle, -speed
+        else :
+            y = y * vmax
+            x = x * vmax
+            return x + y, -(-x + y)
 
         raise NotImplementedError
 
