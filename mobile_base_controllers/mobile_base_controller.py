@@ -17,7 +17,7 @@ class MobileBaseController(Node):
         self.logger = self.get_logger()
 
         self.mobile_base_controller = HBMotorConfig(channels=[0, 1])
-        
+
         self.mobile_base_controller.mode_idle(0)
         self.mobile_base_controller.mode_idle(1)
         self.current_mode = 'idle'
@@ -39,7 +39,6 @@ class MobileBaseController(Node):
         self.logger.info(f'Subscribe to "{self.goal_direction_subscription.topic_name}".')
 
         self.logger.info('Node ready!')
-
 
     def set_mobile_base_mode(
         self,
@@ -69,7 +68,6 @@ class MobileBaseController(Node):
 
         return response
 
-
     def on_direction_goals(self, msg: MobileBaseDirection) -> None:
         if self.current_mode == 'close_loop':
             l, r = self.speeds_from_direction(msg.x, msg.y)
@@ -82,21 +80,17 @@ class MobileBaseController(Node):
             self.mobile_base_controller.move_input_vel(1, r)
             self.current_speed = (l, r)
 
-
     def speeds_from_direction(self, x: float, y: float) -> Tuple[float, float]:
-        vmax = 1
-        dead_zone = 0.1
+        vmax = 0.75
+        dead_zone = 0.01
 
         if sqrt(x ** 2 + y ** 2) <= dead_zone:
             return 0, 0
 
-        else :
+        else:
             y = y * vmax
-            x = x * vmax
+            x = x * vmax * 0.5
             return x + y, -(-x + y)
-
-        raise NotImplementedError
-
 
 
 def main():
