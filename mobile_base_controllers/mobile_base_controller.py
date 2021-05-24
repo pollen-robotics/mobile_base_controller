@@ -1,3 +1,5 @@
+import time
+from threading import Thread
 from typing import Tuple
 
 import rclpy
@@ -37,6 +39,10 @@ class MobileBaseController(Node):
             qos_profile=5,
         )
         self.logger.info(f'Subscribe to "{self.goal_direction_subscription.topic_name}".')
+
+        self.last_pub = time.time()
+        self.wdt = Thread(target=self.wdt_stop)
+        self.wdt.start()
 
         self.logger.info('Node ready!')
 
@@ -79,6 +85,7 @@ class MobileBaseController(Node):
             self.mobile_base_controller.move_input_vel(0, l)
             self.mobile_base_controller.move_input_vel(1, r)
             self.current_speed = (l, r)
+            self.last_pub = time.time()
 
     def speeds_from_direction(self, x: float, y: float) -> Tuple[float, float]:
         vmax = 0.75
@@ -91,6 +98,18 @@ class MobileBaseController(Node):
             y = y * vmax
             x = x * vmax * 0.5
             return x + y, -(-x + y)
+
+    def stop(self):
+        self.mobile_base_controller.move_input_vel(0, 0)
+        self.mobile_base_controller.move_input_vel(1, 0)
+        self.current_speed = (0, 0)
+
+    def wdt_stop(self, check_period=0.1, wdt_duration=1.0):
+        while rclpy.ok():
+            if self.current_speed != (0, 0) and (time.time() - self.last_pub) > wdt_duration:
+                self.stop()
+
+            time.sleep(check_period)
 
 
 def main():
