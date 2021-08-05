@@ -10,7 +10,8 @@ from numpy import sqrt
 from reachy_msgs.msg import MobileBaseDirection
 from reachy_msgs.srv import SetMobileBaseMode
 
-from .hb_controller import HBMotorConfig
+# from .hb_controller import HBMotorConfig
+from .arduino_controller import ArduinoController
 
 
 class MobileBaseController(Node):
@@ -18,10 +19,11 @@ class MobileBaseController(Node):
         super().__init__('mobile_base_controller')
         self.logger = self.get_logger()
 
-        self.mobile_base_controller = HBMotorConfig(channels=[0, 1])
-
+        self.mobile_base_controller = ArduinoController(port='/dev/ttyACM0')
+        # self.mobile_base_controller = HBMotorConfig(channels=[0, 1])
         self.mobile_base_controller.mode_idle(0)
         self.mobile_base_controller.mode_idle(1)
+
         self.current_mode = 'idle'
         self.current_speed = (0, 0)
 
@@ -40,9 +42,9 @@ class MobileBaseController(Node):
         )
         self.logger.info(f'Subscribe to "{self.goal_direction_subscription.topic_name}".')
 
-        self.last_pub = time.time()
-        self.wdt = Thread(target=self.wdt_stop)
-        self.wdt.start()
+        # self.last_pub = time.time()
+        # self.wdt = Thread(target=self.wdt_stop)
+        # self.wdt.start()
 
         self.logger.info('Node ready!')
 
@@ -61,6 +63,7 @@ class MobileBaseController(Node):
             response.success = True
 
         elif request.mode == 'close_loop':
+
             self.mobile_base_controller.mode_close_loop_control(0)
             self.mobile_base_controller.mode_close_loop_control(1)
             self.current_mode = 'close_loop'
