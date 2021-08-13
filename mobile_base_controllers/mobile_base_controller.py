@@ -11,7 +11,7 @@ from reachy_msgs.msg import MobileBaseDirection
 from reachy_msgs.srv import SetMobileBaseMode
 
 # from .hb_controller import HBMotorConfig
-from .arduino_controller import ArduinoController
+from .arduino_controller import ArduinoMotorController
 
 
 class MobileBaseController(Node):
@@ -19,7 +19,7 @@ class MobileBaseController(Node):
         super().__init__('mobile_base_controller')
         self.logger = self.get_logger()
 
-        self.mobile_base_controller = ArduinoController(port='/dev/ttyACM0')
+        self.mobile_base_controller = ArduinoMotorController(port='/dev/ttyACM0')
         # self.mobile_base_controller = HBMotorConfig(channels=[0, 1])
         self.mobile_base_controller.mode_idle(0)
         self.mobile_base_controller.mode_idle(1)
