@@ -17,5 +17,8 @@ class ArduinoMotorController:
         axis = 1 - axis
         self.send_command(f'v {axis} {vel:.2f} 0')
 
+    def send_reset(self):
+        self.send_command('rr')
+
     def send_command(self, command):
         self.serial.write(command.encode() + b'\n')
