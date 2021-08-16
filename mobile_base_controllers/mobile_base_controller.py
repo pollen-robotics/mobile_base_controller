@@ -102,11 +102,6 @@ class MobileBaseController(Node):
             x = x * vmax * 0.5
             return -(x + y), -(-x + y)
 
-    def stop(self):
-        self.mobile_base_controller.move_input_vel(0, 0)
-        self.mobile_base_controller.move_input_vel(1, 0)
-        self.current_speed = (0, 0)
-
     def watchdog_safety_timer(self, check_period=0.1):
         while rclpy.ok():
             if self.current_speed != (0, 0) and (time.time() - self.last_pub) > self.wdt_duration:
