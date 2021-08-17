@@ -57,7 +57,6 @@ class MobileBaseController(Node):
             response.success = True
 
         elif request.mode == 'close_loop':
-
             self.mobile_base_controller.mode_close_loop_control(0)
             self.mobile_base_controller.mode_close_loop_control(1)
             self.current_mode = 'close_loop'
