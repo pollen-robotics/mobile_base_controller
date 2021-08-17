@@ -11,7 +11,7 @@ import time
 import math
 import odrive
 from odrive.enums import *
-from fibre.protocol import ChannelBrokenException
+
 
 class HBMotorConfig:
     """
