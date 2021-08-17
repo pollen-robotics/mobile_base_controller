@@ -8,7 +8,8 @@ from numpy import sqrt
 from reachy_msgs.msg import MobileBaseDirection
 from reachy_msgs.srv import SetMobileBaseMode
 
-from .hb_controller import HBMotorConfig
+# from .hb_controller import HBMotorConfig
+from .arduino_controller import ArduinoMotorController
 
 
 class MobileBaseController(Node):
@@ -16,10 +17,11 @@ class MobileBaseController(Node):
         super().__init__('mobile_base_controller')
         self.logger = self.get_logger()
 
-        self.mobile_base_controller = HBMotorConfig(channels=[0, 1])
-
+        self.mobile_base_controller = ArduinoMotorController(port='/dev/ttyACM0')
+        # self.mobile_base_controller = HBMotorConfig(channels=[0, 1])
         self.mobile_base_controller.mode_idle(0)
         self.mobile_base_controller.mode_idle(1)
+
         self.current_mode = 'idle'
         self.current_speed = (0, 0)
 
@@ -90,7 +92,12 @@ class MobileBaseController(Node):
         else:
             y = y * vmax
             x = x * vmax * 0.5
-            return x + y, -(-x + y)
+            return -(x + y), -(-x + y)
+
+    def stop(self):
+        self.mobile_base_controller.move_input_vel(0, 0)
+        self.mobile_base_controller.move_input_vel(1, 0)
+        self.current_speed = (0, 0)
 
 
 def main():
